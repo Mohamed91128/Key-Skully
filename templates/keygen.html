@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Key Generation System</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%2360a5fa'/%3E%3Cstop offset='100%25' stop-color='%23060b1a'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M22 30a10 10 0 1 1 20 0v4h2a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4v-8a4 4 0 0 1 4-4h2v-4zm6 0v4h8v-4a4 4 0 0 0-8 0z' fill='white' fill-opacity='.92'/%3E%3Ccircle cx='14' cy='16' r='1.2' fill='white' fill-opacity='.8'/%3E%3Ccircle cx='50' cy='18' r='1' fill='white' fill-opacity='.7'/%3E%3Ccircle cx='46' cy='50' r='1.3' fill='white' fill-opacity='.75'/%3E%3C/svg%3E" />
+  <style>
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 900px at 20% 10%, rgba(96, 165, 250, 0.20), transparent 55%),
+        radial-gradient(1000px 700px at 90% 20%, rgba(59, 130, 246, 0.18), transparent 60%),
+        radial-gradient(900px 800px at 40% 95%, rgba(14, 165, 233, 0.12), transparent 60%),
+        linear-gradient(180deg, #050814 0%, #050b1a 40%, #040612 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.90);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.9) 0, transparent 60%),
+        radial-gradient(1px 1px at 22% 68%, rgba(255,255,255,0.75) 0, transparent 60%),
+        radial-gradient(1px 1px at 78% 22%, rgba(255,255,255,0.8) 0, transparent 60%),
+        radial-gradient(1px 1px at 84% 72%, rgba(255,255,255,0.7) 0, transparent 60%),
+        radial-gradient(1px 1px at 46% 42%, rgba(255,255,255,0.65) 0, transparent 60%),
+        radial-gradient(2px 2px at 62% 58%, rgba(96,165,250,0.55) 0, transparent 70%),
+        radial-gradient(2px 2px at 30% 32%, rgba(59,130,246,0.45) 0, transparent 70%);
+      opacity: 0.55;
+      filter: drop-shadow(0 0 10px rgba(96,165,250,0.12));
+    }
+    .container {
+      background: rgba(10, 14, 28, 0.72);
+      border: 1px solid rgba(96, 165, 250, 0.18);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    h1 {
+      color: rgba(255, 255, 255, 0.94);
+      margin-bottom: 30px;
+      font-size: 2.1em;
+      letter-spacing: 0.3px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 2.1em;
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 35% 30%, rgba(96,165,250,0.85), rgba(59,130,246,0.55) 45%, rgba(6,11,26,0.2) 70%);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-mark svg {
+      width: 22px;
+      height: 22px;
+      opacity: 0.92;
+    }
+    .subtitle {
+      color: rgba(255, 255, 255, 0.72);
+      margin-top: -14px;
+      margin-bottom: 22px;
+      font-size: 0.95em;
+    }
+    .key-display {
+      background: rgba(2, 6, 23, 0.72);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 20px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 1.03em;
+      word-break: break-all;
+      color: rgba(255, 255, 255, 0.88);
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.38),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    }
+    .btn {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(59, 130, 246, 0.95) 55%, rgba(96, 165, 250, 0.95) 100%);
+      color: rgba(255, 255, 255, 0.95);
+      border: none;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      margin: 10px;
+      box-shadow: 0 14px 30px rgba(59, 130, 246, 0.22);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(59, 130, 246, 0.28);
+      filter: saturate(1.1);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .info {
+      color: rgba(255, 255, 255, 0.70);
+      margin: 15px 0;
+      font-size: 0.9em;
+      line-height: 1.45;
+    }
+    .error {
+      color: rgba(255, 255, 255, 0.92);
+      background: rgba(220, 38, 38, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.25);
+      border-radius: 12px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .success {
+      color: rgba(255, 255, 255, 0.92);
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.22);
+      border-radius: 12px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .countdown {
+      font-weight: bold;
+      color: rgba(96, 165, 250, 0.92);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" data-generated-now="{{ 1 if generated_now else 0 }}">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 10.2a4.5 4.5 0 1 1 9 0V12h.9c1.16 0 2.1.94 2.1 2.1v4.8c0 1.16-.94 2.1-2.1 2.1H6.6c-1.16 0-2.1-.94-2.1-2.1v-4.8c0-1.16.94-2.1 2.1-2.1h.9v-1.8Zm2.4 0V12h4.2v-1.8a2.1 2.1 0 0 0-4.2 0Z" fill="white" fill-opacity="0.95"/>
+        </svg>
+      </span>
+      <h1>Secure Key Generator</h1>
+    </div>
+    <div class="subtitle">SKULLY KEY <br> Dev-HISHAM</div>
+    
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    {% if success %}
+    <div class="success">
+      <strong>Key Generated Successfully!</strong><br>
+      Valid until: {{ expires_at }}
+    </div>
+    {% endif %}
+    
+    <div class="key-display" id="keyDisplay">
+      {% if key %}
+        {{ key }}
+      {% else %}
+        Click "Generate Key" to get your secure access key
+      {% endif %}
+    </div>
+    
+    {% if cooldown %}
+    <div class="info">
+      Please wait <span class="countdown">{{ cooldown }}</span> before generating a new key
+    </div>
+    {% endif %}
+    
+    <div class="info">
+      {% if not key %}
+        Each key is valid for {{ valid_hours|default(24) }} hours<br>
+        One key per device fingerprint<br>
+        Cooldown period: {{ cooldown_hours|default(1) }} hours
+      {% else %}
+        This key is tied to your device fingerprint<br>
+        Refreshing this page will NOT generate a new key <br>
+        SKULLY---HISHAM
+      
+      {% endif %}
+    </div>
+    
+    <button class="btn" onclick="generateKey()" id="generateBtn">
+      {% if key %}View Key{% else %}Generate Key{% endif %}
+    </button>
+    
+    {% if key %}
+    <button class="btn" onclick="validateKey()">Validate Key</button>
+    {% endif %}
+  </div>
+
+  <script>
+    (function () {
+      const container = document.querySelector('.container');
+      if (!container) return;
+      const generatedNow = container.getAttribute('data-generated-now');
+      if (generatedNow === '1') {
+        setTimeout(() => {
+          window.close();
+          setTimeout(() => {
+            window.location.replace('about:blank');
+          }, 250);
+        }, 10000);
+      }
+    })();
+
+    async function generateKey() {
+      const btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      
+      try {
+        const response = await fetch('/genkey', {method: 'POST'});
+        
+        if (response.ok) {
+          const text = await response.text();
+          // Extract key from HTML response
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'text/html');
+          const keyElement = doc.querySelector('.key-display');
+          const container = doc.querySelector('.container');
+          const generatedNow = container ? container.getAttribute('data-generated-now') : '0';
+          if (keyElement) {
+            document.getElementById('keyDisplay').innerHTML = keyElement.innerHTML;
+            // Update button text
+            btn.textContent = 'View Key';
+            // Update info section
+            const infoElement = doc.querySelector('.info');
+            if (infoElement) {
+              document.querySelector('.info').innerHTML = infoElement.innerHTML;
+            }
+            // Check if there's an error message
+            const errorElement = doc.querySelector('.error');
+            if (errorElement) {
+              document.getElementById('keyDisplay').innerHTML = `<div style="color: rgba(255,255,255,0.92);">${errorElement.textContent}</div>`;
+              btn.textContent = 'Generate Key';
+            }
+
+            if (generatedNow === '1') {
+              setTimeout(() => {
+                window.close();
+                setTimeout(() => {
+                  window.location.replace('about:blank');
+                }, 250);
+              }, 10000);
+            }
+          }
+        } else {
+          document.getElementById('keyDisplay').innerHTML = `<div style="color: rgba(255,255,255,0.92);">Error: ${response.status}</div>`;
+        }
+      } catch (error) {
+        document.getElementById('keyDisplay').innerHTML = `<div style="color: rgba(255,255,255,0.92);">Network error</div>`;
+      }
+      
+      btn.disabled = false;
+    }
+    
+    async function validateKey() {
+      const key = document.getElementById('keyDisplay').textContent.trim();
+      
+      try {
+        const response = await fetch('/validate', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({key: key})
+        });
+        const data = await response.json();
+        
+        if (data.valid) {
+          alert(`✅ Key is valid!\nExpires: ${data.expires_at}`);
+        } else {
+          alert('❌ Key is invalid or expired');
+        }
+      } catch (error) {
+        alert('Network error during validation');
+      }
+    }
+  </script>
+</body>
+</html>
