@@ -1,2 +1,6 @@
 flask==3.0.0
 cryptography==41.0.7
+flask-cors
+pandas
+gunicorn
+requests
